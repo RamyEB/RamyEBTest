@@ -41,7 +41,7 @@ jobs:
           PR_ASSIGN: '{"assignees": ["ramyeb"]}'
         run: |
           PR_BRANCH_NAME="sync-discover-doc-$(date +%s)"
-          SOURCE_REPO_URL=https://${SYNC_DEV_PORTAL_TOKEN}@${SOURCE_REPO}"
+          SOURCE_REPO_URL="https://${SYNC_DEV_PORTAL_TOKEN}@${SOURCE_REPO}"
           TARGET_REPO_URL="https://${SYNC_DEV_PORTAL_TOKEN}@${TARGET_REPO}"
 
           git clone --depth 1 $SOURCE_REPO_URL
