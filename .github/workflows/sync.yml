@@ -44,20 +44,29 @@ jobs:
           git clone --depth 1 ${SOURCE_REPO}
           git clone --depth 1 ${TARGET_REPO}
 
+          echo "cd ${TARGET_REPO_NAME}"
           cd ${TARGET_REPO_NAME}
+          echo "git checkout -b ${PR_BRANCH_NAME}"
           git checkout -b ${PR_BRANCH_NAME}
 
           # Replace files
+          echo "cp -rT ${SOURCE_FILE_PATH_1} > ${TARGET_FILE_PATH_1}"
           cp -rT ../${SOURCE_REPO_NAME}/${SOURCE_FILE_PATH_1} ${TARGET_FILE_PATH_1}
+          echo "cp -rT ${SOURCE_FILE_PATH_2} > ${TARGET_FILE_PATH_2}"
           cp -rT ../${SOURCE_REPO_NAME}/${SOURCE_FILE_PATH_2} ${TARGET_FILE_PATH_2}
 
           # Push changes
+          echo "add ${TARGET_FILE_PATH_1}"
           git add ${TARGET_FILE_PATH_1}
+          echo "add ${TARGET_FILE_PATH_2}"
           git add ${TARGET_FILE_PATH_2}
+          echo "commit"
           git commit -m "${PR_COMMIT_MESSAGE}"
+          echo "push"
           git push origin ${PR_BRANCH_NAME}
 
           # Create Pull Request
+          echo "Creating a PR..."
           PR_RESPONSE=$(curl -X POST -H "Authorization: token ${SYNC_DEV_PORTAL_TOKEN}" \
               -d '{"title":"${PR_TITLE}","head":"'"$PR_BRANCH_NAME"'","base":"${TARGET_BRANCH}"}' \
               ${TARGET_PR_API_URL})
@@ -65,11 +74,13 @@ jobs:
           PR_ISSUE_URL=$(echo $PR_RESPONSE | jq -r '.issue_url') 
 
           # Assign Reviewers
+          echo "Assigning Reviewers..."
           curl -s -X POST -H "Authorization: token ${SYNC_DEV_PORTAL_TOKEN}" \
               -d "$PR_REVIEWERS" \
               ${PR_URL}/requested_reviewers
 
           # Assign Users to the Pull Request
+          echo "Assigning Users..."
           curl -s -X POST -H "Authorization: token ${SYNC_DEV_PORTAL_TOKEN}" \
               -d "$PR_ASSIGN" \
               ${PR_ISSUE_URL}/assignees
