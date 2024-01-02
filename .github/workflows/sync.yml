@@ -37,7 +37,7 @@ jobs:
           TARGET_PR_API_URL: "https://api.github.com/repos/LedgerHQ/developer-portal/pulls"
           PR_TITLE: "Merging documentation from wallet-api"
           PR_COMMIT_MESSAGE: "doc: add new changes from wallet-api doc"
-          PR_BRANCH_NAME: sync-discover-doc-$(date +%s)
+          PR_BRANCH_NAME: sync-discover-doc-
           PR_REVIEWERS: '{"reviewers": ["cfranceschi-ledger"]}'
           PR_ASSIGN: '{"assignees": ["ramyeb"]}'
         run: |
@@ -45,7 +45,7 @@ jobs:
           git clone --depth 1 ${TARGET_REPO}
 
           cd ${TARGET_REPO_NAME}
-          git checkout -b ${PR_BRANCH_NAME}
+          git checkout -b ${PR_BRANCH_NAME}$(date +%s)
 
           # Replace files
           cp -rT ../${SOURCE_REPO_NAME}/${SOURCE_FILE_PATH_1} ${TARGET_FILE_PATH_1}
@@ -55,11 +55,11 @@ jobs:
           git add ${TARGET_FILE_PATH_1}
           git add ${TARGET_FILE_PATH_2}
           git commit -m "${PR_COMMIT_MESSAGE}"
-          git push origin ${PR_BRANCH_NAME}
+          git push origin ${PR_BRANCH_NAME}$(date +%s)
 
           # Create Pull Request
           PR_RESPONSE=$(curl -X POST -H "Authorization: token ${SYNC_DEV_PORTAL_TOKEN}" \
-              -d '{"title":"${PR_TITLE}","head":"'"$PR_BRANCH_NAME"'","base":"${TARGET_BRANCH}"}' \
+              -d '{"title":"${PR_TITLE}","head":"'"${PR_BRANCH_NAME}$(date +%s)"'","base":"${TARGET_BRANCH}"}' \
               ${TARGET_PR_API_URL})
           PR_URL=$(echo $PR_RESPONSE | jq -r '.url') 
           PR_ISSUE_URL=$(echo $PR_RESPONSE | jq -r '.issue_url') 
